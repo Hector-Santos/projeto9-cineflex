@@ -85,6 +85,16 @@ export default function Assentos(){
         </CircleText>
         </Samples>
         </Seats>
+        <form>
+        <Item>
+        <h1>Nome do Comprador</h1>
+        <input placeholder="Digite Seu Nome..."/>
+        </Item>
+        <Item>
+        <h1>CPF do Comprador</h1>
+        <input placeholder="Digite Seu CPF..."/>
+        </Item>
+        </form>
         </Container>)
         
 }
@@ -159,6 +169,8 @@ const Seats = styled.div`
 display: flex;
 flex-wrap: wrap;
 margin-left: 10px;
+margin-bottom: 40px
+
 `
 const CircleText = styled.div`
 display: flex;
@@ -169,4 +181,29 @@ margin-left: 30px;
 h1{
     font-family: 'Roboto', sans-serif;
 }
+
+`
+const Item = styled.div`
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+font-family: 'Roboto', sans-serif;
+
+h1{
+    font-size: 18px;
+    margin-left: 50px;
+}
+input{
+height: 40px;
+width: 280px;
+border-radius: 3px;
+margin-left: 50px;
+border: 1px solid #D4D4D4;
+
+}
+input::placeholder {
+    font-size: 18px;
+    font-style: italic;
+}
+
 `
