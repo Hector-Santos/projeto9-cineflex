@@ -2,7 +2,8 @@ import { useParams, Link } from "react-router-dom"
 import styled from "styled-components"
 import React from "react"
 import axios from "axios"
-import { TopText, Container } from "./Styled"
+import { TopText, Container, Footer, Filme } from "./Styled"
+import { useNavigate } from "react-router-dom"
 
 function Seat({number, id, isAvailable, selecionados}){
     
@@ -49,14 +50,30 @@ function Seat({number, id, isAvailable, selecionados}){
 export default function Assentos(){
     const {idSessao} = useParams()
     const [assentos, setAssentos] = React.useState([])
+    const [cpf, setCpf] = React.useState([])
+    const [nome, setNome] = React.useState([])
+    let navigate = useNavigate()
+    
+
+    function enviar (){
+    
+    navigate("/sucesso")
+    }
     const selecionados = []
+    let dados = {
+        ids: selecionados,
+        name: nome,
+        cpf: cpf
+    }
+
+
     React.useEffect(() => {
 
         const promise = 
         axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/showtimes/${idSessao}/seats`)
     
         promise.then(response => {
-          setAssentos(response.data.seats)
+          setAssentos(response.data)
         })
         
       }, [])
@@ -68,7 +85,7 @@ export default function Assentos(){
         Selecione os Assentos
         </TopText>
         <Seats>
-        {assentos.map((assento) =>
+        {assentos.seats?.map((assento) =>
         <Seat number={assento.name} id= {assento.id} isAvailable = {assento.isAvailable} selecionados={selecionados} ></Seat>)}
         <Samples>
         <CircleText>
@@ -88,13 +105,25 @@ export default function Assentos(){
         <form>
         <Item>
         <h1>Nome do Comprador</h1>
-        <input placeholder="Digite Seu Nome..."/>
+        <input onChange={event => setNome(event.target.value)}placeholder="Digite Seu Nome..."/>
         </Item>
         <Item>
         <h1>CPF do Comprador</h1>
-        <input placeholder="Digite Seu CPF..."/>
+        <input onChange={event => setCpf(event.target.value)} placeholder="Digite Seu CPF..."/>
         </Item>
         </form>
+        <EnviaAssentos>
+
+        </EnviaAssentos>
+        <Footer>
+          <Filme>
+         <img src={assentos.movie?.posterURL}/>
+         </Filme>
+         <div>
+         <h1>{assentos.movie?.title}</h1>
+         <h1>{assentos.day?.date} - {assentos.day?.weekday}</h1>
+         </div>
+        </Footer>
         </Container>)
         
 }
@@ -205,5 +234,10 @@ input::placeholder {
     font-size: 18px;
     font-style: italic;
 }
+
+`
+
+const EnviaAssentos = styled.button`
+
 
 `
