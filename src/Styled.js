@@ -13,7 +13,7 @@ width: 100%;
 `
 export const Container = styled.div`
 padding-top: 67px;
-padding-bottom: 90px;
+margin-bottom: 150px;
 `
 export const Footer = styled.div`height: 117px;
 position: fixed;
@@ -51,4 +51,16 @@ height: 72px;
 width: 48px;
 }
 
+`
+
+export const Button = styled.button`
+margin-left: 75px;
+margin-top: 20px;
+font-size: 16px;
+height: 42px;
+width: 225px;
+border-radius: 3px;
+background-color: #E8833A;
+font-family: 'Roboto', sans-serif;
+color: white;
 `

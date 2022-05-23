@@ -2,10 +2,10 @@ import { useParams, Link } from "react-router-dom"
 import styled from "styled-components"
 import React from "react"
 import axios from "axios"
-import { TopText, Container, Footer, Filme } from "./Styled"
+import { TopText, Container, Footer, Filme} from "./Styled"
 import { useNavigate } from "react-router-dom"
 
-function Seat({number, id, isAvailable, selecionados}){
+function Seat({number, id, isAvailable, selecionadosId, selecionados, index}){
     
     const [estadoAssento, setEstadoAssento] = React.useState(0)
     
@@ -18,15 +18,20 @@ function Seat({number, id, isAvailable, selecionados}){
             if(estadoAssento == 1){
                 
                 setEstadoAssento(0)
-                const index = selecionados.indexOf(id);
-                selecionados.splice(index, 1)
+                const ind = selecionadosId.indexOf(id);
+                selecionadosId.splice(ind, 1)
+                const i = selecionados.indexOf(index+1)
+                selecionados.splice(i, 1)
                 console.log(selecionados) 
             }
             else if(estadoAssento == 0){
                 setEstadoAssento(1)
-                selecionados.push(id)
+                selecionados.push(index+1)
+                selecionadosId.push(id)
                 console.log(selecionados) 
-        }
+            }else{
+                alert("esse assento não está disponível")
+            }
        
         console.log(estadoAssento)
     }
@@ -47,25 +52,36 @@ function Seat({number, id, isAvailable, selecionados}){
         </StyledSeat>)
 }
 
-export default function Assentos(){
+export default function Assentos( {setReserva}){
     const {idSessao} = useParams()
     const [assentos, setAssentos] = React.useState([])
     const [cpf, setCpf] = React.useState([])
     const [nome, setNome] = React.useState([])
-    let navigate = useNavigate()
-    
-
-    function enviar (){
-    
-    navigate("/sucesso")
-    }
     const selecionados = []
-    let dados = {
-        ids: selecionados,
-        name: nome,
-        cpf: cpf
-    }
+    const selecionadosId = []
+    let navigate = useNavigate()
 
+    function enviaAssentos(){
+        if(selecionadosId.length>=1){
+        setReserva({
+            filme : assentos.movie?.title,
+            data : assentos.day?.date,
+            horario : assentos.name, 
+            assentos : selecionados,
+            nome: nome,
+            cpf : cpf
+
+              })
+        let dados = {
+            ids: selecionadosId,
+            name: nome,
+            cpf: cpf
+        }
+
+        axios.post("https://mock-api.driven.com.br/api/v5/cineflex/seats/book-many", dados)
+        navigate("/sucesso")
+     }
+    }
 
     React.useEffect(() => {
 
@@ -85,8 +101,8 @@ export default function Assentos(){
         Selecione os Assentos
         </TopText>
         <Seats>
-        {assentos.seats?.map((assento) =>
-        <Seat number={assento.name} id= {assento.id} isAvailable = {assento.isAvailable} selecionados={selecionados} ></Seat>)}
+        {assentos.seats?.map((assento, index) =>
+        <Seat number={assento.name} id= {assento.id} isAvailable = {assento.isAvailable} selecionadosId={selecionadosId} selecionados={selecionados} index={index} ></Seat>)}
         <Samples>
         <CircleText>
         <Selecionado></Selecionado>
@@ -102,7 +118,7 @@ export default function Assentos(){
         </CircleText>
         </Samples>
         </Seats>
-        <form>
+        
         <Item>
         <h1>Nome do Comprador</h1>
         <input onChange={event => setNome(event.target.value)}placeholder="Digite Seu Nome..."/>
@@ -111,17 +127,17 @@ export default function Assentos(){
         <h1>CPF do Comprador</h1>
         <input onChange={event => setCpf(event.target.value)} placeholder="Digite Seu CPF..."/>
         </Item>
-        </form>
-        <EnviaAssentos>
-
-        </EnviaAssentos>
+        <Button onClick={()=>enviaAssentos()}>
+         Reservar assentos
+        </Button>
+        
         <Footer>
           <Filme>
          <img src={assentos.movie?.posterURL}/>
          </Filme>
          <div>
          <h1>{assentos.movie?.title}</h1>
-         <h1>{assentos.day?.date} - {assentos.day?.weekday}</h1>
+         <h1>{assentos.day?.date} - {assentos.name}</h1>
          </div>
         </Footer>
         </Container>)
@@ -198,7 +214,7 @@ const Seats = styled.div`
 display: flex;
 flex-wrap: wrap;
 margin-left: 10px;
-margin-bottom: 40px
+margin-bottom: 20px
 
 `
 const CircleText = styled.div`
@@ -237,7 +253,14 @@ input::placeholder {
 
 `
 
-const EnviaAssentos = styled.button`
-
-
+const Button = styled.button`
+margin-left: 75px;
+margin-top: 20px;
+font-size: 16px;
+height: 42px;
+width: 225px;
+border-radius: 3px;
+background-color: #E8833A;
+font-family: 'Roboto', sans-serif;
+color: white;
 `

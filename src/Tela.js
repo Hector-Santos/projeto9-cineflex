@@ -5,7 +5,10 @@ import Assentos from "./Assentos.js"
 import Sucesso from "./Sucesso.js"
 import Filmes from "./Filmes.js"
 import styled from 'styled-components'
+
 export default function Tela(){
+
+    const [reserva, setReserva] = React.useState();
    return(
     <BrowserRouter>
     <Topbar>
@@ -15,8 +18,8 @@ export default function Tela(){
     <Routes>
      <Route path="/" element={<Filmes />}/>
      <Route path="/sessoes/:idFilme" element={<Horario />}/>
-     <Route path="/assentos/:idSessao" element={<Assentos />}/>
-     <Route path="/sucesso" element={<Sucesso />}/>
+     <Route path="/assentos/:idSessao" element={<Assentos setReserva={setReserva}/>}/>
+     <Route path="/sucesso" element={<Sucesso reserva={reserva} />}/>
     </Routes>
     </BrowserRouter>
      
