@@ -4,8 +4,9 @@ import React from "react"
 import axios from "axios"
 import { TopText, Container, Footer, Filme} from "./Styled"
 import { useNavigate } from "react-router-dom"
+import react from "react"
 
-function Seat({number, id, isAvailable, selecionadosId, selecionados, index}){
+function Seat({number, id, isAvailable,  selecionadosId,  setSelecionadosId, selecionados, setSelecionados, index}){
     
     const [estadoAssento, setEstadoAssento] = React.useState(0)
     
@@ -16,19 +17,27 @@ function Seat({number, id, isAvailable, selecionadosId, selecionados, index}){
     function clickhandler(){
 
             if(estadoAssento == 1){
-                
+                let aux = selecionadosId
+                let aux2 = selecionados
                 setEstadoAssento(0)
-                const ind = selecionadosId.indexOf(id);
-                selecionadosId.splice(ind, 1)
-                const i = selecionados.indexOf(index+1)
-                selecionados.splice(i, 1)
+                const ind = aux.indexOf(id);
+                aux.splice(ind, 1)
+                setSelecionadosId(aux)
+                const i = aux2.indexOf(index+1)
+                aux2.splice(i, 1)
+                setSelecionados(aux2)
                 console.log(selecionados) 
             }
             else if(estadoAssento == 0){
+                let aux = selecionadosId
+                let aux2 = selecionados
                 setEstadoAssento(1)
-                selecionados.push(index+1)
-                selecionadosId.push(id)
-                console.log(selecionados) 
+                aux2.push(index+1)
+                setSelecionados(aux2)
+                aux.push(id)
+                setSelecionadosId(aux)
+                
+                console.log(selecionadosId) 
             }else{
                 alert("esse assento não está disponível")
             }
@@ -55,10 +64,10 @@ function Seat({number, id, isAvailable, selecionadosId, selecionados, index}){
 export default function Assentos( {setReserva}){
     const {idSessao} = useParams()
     const [assentos, setAssentos] = React.useState([])
-    const [cpf, setCpf] = React.useState([])
-    const [nome, setNome] = React.useState([])
-    const selecionados = []
-    const selecionadosId = []
+    const [cpf, setCpf] = React.useState()
+    const [nome, setNome] = React.useState()
+    const [selecionados , setSelecionados]= react.useState([])
+    const [selecionadosId, setSelecionadosId] = React.useState([])
     let navigate = useNavigate()
 
     function enviaAssentos(){
@@ -77,10 +86,12 @@ export default function Assentos( {setReserva}){
             name: nome,
             cpf: cpf
         }
-
         axios.post("https://mock-api.driven.com.br/api/v5/cineflex/seats/book-many", dados)
-        navigate("/sucesso")
-     }
+    navigate("/sucesso")
+    }
+
+    
+     
     }
 
     React.useEffect(() => {
@@ -102,7 +113,7 @@ export default function Assentos( {setReserva}){
         </TopText>
         <Seats>
         {assentos.seats?.map((assento, index) =>
-        <Seat number={assento.name} id= {assento.id} isAvailable = {assento.isAvailable} selecionadosId={selecionadosId} selecionados={selecionados} index={index} ></Seat>)}
+        <Seat number={assento.name} id= {assento.id} isAvailable = {assento.isAvailable} selecionadosId={selecionadosId} setSelecionadosId = {setSelecionadosId} selecionados={selecionados} setSelecionados = {setSelecionados} index={index} ></Seat>)}
         <Samples>
         <CircleText>
         <Selecionado></Selecionado>
